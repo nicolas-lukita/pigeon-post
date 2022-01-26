@@ -4,7 +4,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:pigeon_post/widgets/message_bubble.dart';
 
 class Message extends StatefulWidget {
-  const Message({Key? key}) : super(key: key);
+  final String currentUid;
+  final String receiverUid;
+  const Message({Key? key, required this.currentUid, required this.receiverUid})
+      : super(key: key);
 
   @override
   State<Message> createState() => _MessageState();
@@ -49,16 +52,27 @@ class _MessageState extends State<Message> {
             builder: (ctx, chatSnapShot) {
               final chatDocs = chatSnapShot.data!.documents;
               return ListView.builder(
-                reverse: true,
-                scrollDirection: Axis.vertical,
-                shrinkWrap: true,
-                itemCount: chatDocs.length,
-                itemBuilder: (ctx, index) => MessageBubble(
-                  username: chatDocs[index]['username'],
-                  message: chatDocs[index]['text'],
-                  isMe: chatDocs[index]['userId'] == userUId,
-                ),
-              );
+                  reverse: true,
+                  scrollDirection: Axis.vertical,
+                  shrinkWrap: true,
+                  itemCount: chatDocs.length,
+                  itemBuilder: (ctx, index) {
+                    if ((chatDocs[index]['receiver'] == widget.currentUid ||
+                            chatDocs[index]['sender'] == widget.currentUid) &&
+                        (chatDocs[index]['sender'] == widget.receiverUid ||
+                            chatDocs[index]['receiver'] ==
+                                widget.receiverUid)) {
+                      return MessageBubble(
+                        username: chatDocs[index]['username'],
+                        message: chatDocs[index]['text'],
+                        isMe: chatDocs[index]['sender'] == userUId,
+                      );
+                    } else {
+                      return SizedBox(
+                        height: 0,
+                      );
+                    }
+                  });
             },
           );
         });

@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import './screens/friend_screen.dart';
+import 'screens/home_screen.dart';
 import './screens/login_screen.dart';
 import './screens/message_screen.dart';
 
@@ -24,8 +24,8 @@ class MyApp extends StatelessWidget {
         stream: FirebaseAuth.instance.onAuthStateChanged,
         builder: (ctx, snapShot) {
           if (snapShot.hasData) {
-            //return const FriendScreen();
-            return const MessageScreen();
+            return const HomeScreen();
+            //return const MessageScreen();
           } else {
             return const LoginScreen();
           }
@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
       routes: {
         LoginScreen.routeName: (ctx) => const LoginScreen(),
         MessageScreen.routeName: (ctx) => const MessageScreen(),
-        FriendScreen.routeName: (ctx) => const FriendScreen(),
+        HomeScreen.routeName: (ctx) => const HomeScreen(),
       },
     );
   }

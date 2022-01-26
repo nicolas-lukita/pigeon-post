@@ -21,7 +21,7 @@ class MessageBubble extends StatelessWidget {
         Container(
           decoration: BoxDecoration(
               color: isMe
-                  ? Color(
+                  ? const Color(
                       0xff99a88e) //const Color(0xffb9aefe) //Theme.of(context).primaryColor
                   : Colors.black54, // Color(0xFFcbff00),
               borderRadius: BorderRadius.only(

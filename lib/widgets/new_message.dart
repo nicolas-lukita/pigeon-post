@@ -3,14 +3,15 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class NewMessage extends StatefulWidget {
-  const NewMessage({Key? key}) : super(key: key);
+  final String receiverUid;
+  const NewMessage({Key? key, required this.receiverUid}) : super(key: key);
 
   @override
   State<NewMessage> createState() => _NewMessageState();
 }
 
 class _NewMessageState extends State<NewMessage> {
-  final _controller = new TextEditingController();
+  final _controller = TextEditingController();
   var _messageContent = '';
 
   void _sendMessage() async {
@@ -23,8 +24,9 @@ class _NewMessageState extends State<NewMessage> {
     Firestore.instance.collection('chat').add({
       'text': _messageContent,
       'sentAt': Timestamp.now(),
-      'userId': user.uid,
+      'sender': user.uid,
       'username': userData['username'],
+      'receiver': widget.receiverUid,
       'timeSent': DateTime.now(),
     });
 

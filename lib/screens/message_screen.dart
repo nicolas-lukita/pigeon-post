@@ -11,9 +11,13 @@ class MessageScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final arguments = ModalRoute.of(context)!.settings.arguments as Map;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Pigeon\'s Chat Room'),
+        title: arguments == null
+            ? const Text('Pigeon\'s Chat Room')
+            : Text(arguments['receiverUsername']),
         backgroundColor: const Color(
             0xff47648a), //Theme.of(context).primaryColor, // Color(0xff72abba),
         actions: [
@@ -55,10 +59,16 @@ class MessageScreen extends StatelessWidget {
           color: const Color(
               0xfff4e2d0), //Theme.of(context).splashColor, // Color(0xfffaf8f5), //Theme.of(context).backgroundColor,
           child: Column(
-            children: const <Widget>[
+            children: <Widget>[
               TranslateBar(),
-              Expanded(child: Message()),
-              NewMessage()
+              Expanded(
+                  child: Message(
+                currentUid: arguments['currentUid'],
+                receiverUid: arguments['receiverUid'],
+              )),
+              NewMessage(
+                receiverUid: arguments['receiverUid'],
+              )
             ],
           )),
     );

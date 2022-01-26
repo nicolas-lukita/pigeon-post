@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:pigeon_post/widgets/image_picker.dart';
+import './user_image_picker.dart';
+import 'dart:io';
 
 class LoginForm extends StatefulWidget {
   LoginForm(this.submitFn, this.isLoading);
 
   final bool isLoading;
   final void Function(String email, String username, String password,
-      bool isLogin, BuildContext ctx) submitFn;
+      File image, bool isLogin, BuildContext ctx) submitFn;
 
   @override
   State<LoginForm> createState() => _LoginFormState();
@@ -15,6 +16,7 @@ class LoginForm extends StatefulWidget {
 class _LoginFormState extends State<LoginForm> {
   final _formKey = GlobalKey<FormState>();
 
+  File? _userImageFile = File('');
   var _userEmail = '';
   var _userName = '';
   var _userPassword = '';
@@ -26,12 +28,24 @@ class _LoginFormState extends State<LoginForm> {
     final isValid = _formKey.currentState!.validate(); //validate all form input
     FocusScope.of(context).unfocus();
 
+    if (_userImageFile == null && !_isLogin) {
+      Scaffold.of(context).showSnackBar(SnackBar(
+        content: const Text('Please pick an image'),
+        backgroundColor: Theme.of(context).errorColor,
+      ));
+      return;
+    }
+
     if (isValid) {
       _formKey.currentState!
           .save(); //call all onSaved function of TextFormField
       widget.submitFn(_userEmail.trim(), _userName.trim(), _userPassword.trim(),
-          _isLogin, context);
+          _userImageFile!, _isLogin, context);
     }
+  }
+
+  void _submitImage(File image) {
+    _userImageFile = image;
   }
 
   @override
@@ -54,7 +68,10 @@ class _LoginFormState extends State<LoginForm> {
                     const SizedBox(
                       height: 10,
                     ),
-                    if (!_isLogin) ImagePicker(),
+                    if (!_isLogin)
+                      UserImagePicker(
+                        imagePickFn: _submitImage,
+                      ),
                     const SizedBox(
                       height: 10,
                     ),
