@@ -27,10 +27,10 @@ class _userPageState extends State<userPage> {
                 return ListView.builder(
                     itemCount: userInfo.length,
                     itemBuilder: (listviewCTX, index) {
+                      var receiverId = userInfo[index].documentID;
                       return GestureDetector(
                         behavior: HitTestBehavior.opaque,
                         onTap: () {
-                          var receiverId = userInfo[index].documentID;
                           print('$receiverId tapped');
                           Navigator.pushNamed(context, MessageScreen.routeName,
                               arguments: {
@@ -39,15 +39,37 @@ class _userPageState extends State<userPage> {
                                 'currentUid': widget.currentUser
                               });
                         },
-                        child: Container(
-                          child:
-                              userInfo[index].documentID != widget.currentUser
-                                  ? FriendTile(
-                                      userName: userInfo[index]['username'],
-                                      userImage: userInfo[index]['image_url'],
-                                    )
-                                  : null,
-                        ),
+                        child: StreamBuilder<QuerySnapshot>(
+                            stream: Firestore.instance
+                                .collection('chat')
+                                .orderBy('timeSent', descending: true)
+                                .snapshots(),
+                            builder: (ctx, chatSnapShot) {
+                              String recentMessage = '';
+                              final chatDocs = chatSnapShot.data!.documents;
+                              //get the most recent message
+                              for (int i = 0; i < chatDocs.length; i++) {
+                                if ((chatDocs[i]['receiver'] == receiverId &&
+                                        chatDocs[i]['sender'] ==
+                                            widget.currentUser) ||
+                                    (chatDocs[i]['receiver'] ==
+                                            widget.currentUser &&
+                                        chatDocs[i]['sender'] == receiverId)) {
+                                  recentMessage = chatDocs[i]['text'];
+                                  break;
+                                }
+                              }
+                              return Container(
+                                child: userInfo[index].documentID !=
+                                        widget.currentUser
+                                    ? FriendTile(
+                                        userName: userInfo[index]['username'],
+                                        userImage: userInfo[index]['image_url'],
+                                        recentMessage: recentMessage,
+                                      )
+                                    : null,
+                              );
+                            }),
                       );
                     });
               }),

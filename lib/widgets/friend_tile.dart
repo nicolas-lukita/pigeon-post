@@ -3,7 +3,12 @@ import 'package:flutter/material.dart';
 class FriendTile extends StatelessWidget {
   final String userName;
   final String userImage;
-  const FriendTile({Key? key, required this.userName, required this.userImage})
+  final String recentMessage;
+  const FriendTile(
+      {Key? key,
+      required this.userName,
+      required this.userImage,
+      required this.recentMessage})
       : super(key: key);
 
   @override
@@ -39,7 +44,7 @@ class FriendTile extends StatelessWidget {
                         height: 5,
                       ),
                       Text(
-                        "recent message recent message ",
+                        recentMessage,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       )
