@@ -23,6 +23,9 @@ class _userPageState extends State<userPage> {
           child: StreamBuilder<QuerySnapshot>(
               stream: Firestore.instance.collection('users').snapshots(),
               builder: (ctx, userSnapShot) {
+                if (userSnapShot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
                 final userInfo = userSnapShot.data!.documents;
                 return ListView.builder(
                     itemCount: userInfo.length,
@@ -31,7 +34,6 @@ class _userPageState extends State<userPage> {
                       return GestureDetector(
                         behavior: HitTestBehavior.opaque,
                         onTap: () {
-                          print('$receiverId tapped');
                           Navigator.pushNamed(context, MessageScreen.routeName,
                               arguments: {
                                 'receiverUsername': userInfo[index]['username'],
@@ -45,6 +47,11 @@ class _userPageState extends State<userPage> {
                                 .orderBy('timeSent', descending: true)
                                 .snapshots(),
                             builder: (ctx, chatSnapShot) {
+                              if (chatSnapShot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return const Center(
+                                    child: CircularProgressIndicator());
+                              }
                               String recentMessage = '';
                               final chatDocs = chatSnapShot.data!.documents;
                               //get the most recent message

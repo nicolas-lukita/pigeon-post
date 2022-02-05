@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:pigeon_post/pages/language_page.dart';
+import 'package:pigeon_post/providers/language_provider.dart';
+import 'package:provider/src/provider.dart';
+import '../models/language.dart';
 
 class TranslateBar extends StatefulWidget {
   const TranslateBar({Key? key}) : super(key: key);
@@ -8,10 +12,30 @@ class TranslateBar extends StatefulWidget {
 }
 
 class _TranslateBarState extends State<TranslateBar> {
+  void _chooseFirstLanguage(String title, bool isAutomaticEnabled) async {
+    await Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => LanguagePage(
+                  title: title,
+                  isAutomaticEnabled: isAutomaticEnabled,
+                  whichLanguage: 1,
+                )));
+  }
+
+  void _chooseSecondLanguage(String title, bool isAutomaticEnabled) async {
+    await Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => LanguagePage(
+                  title: title,
+                  isAutomaticEnabled: isAutomaticEnabled,
+                  whichLanguage: 2,
+                )));
+  }
+
   @override
   Widget build(BuildContext context) {
-    String _language1 = 'Language 1';
-    String _language2 = 'Language 2';
     return Container(
       color: const Color(0xFFfaf8f5),
       height: 50,
@@ -19,10 +43,15 @@ class _TranslateBarState extends State<TranslateBar> {
         children: <Widget>[
           Expanded(
               child: InkWell(
-                  onTap: () {},
+                  onTap: () {
+                    _chooseFirstLanguage('Translate from', true);
+                  },
                   child: Center(
                       child: Text(
-                    _language1,
+                    context
+                        .watch<LanguageProvider>()
+                        .language1
+                        .name, //_language1.name,
                     style: TextStyle(
                         color: Theme.of(context).primaryColor,
                         fontWeight: FontWeight.bold),
@@ -30,15 +59,24 @@ class _TranslateBarState extends State<TranslateBar> {
           IconButton(
             icon: Icon(Icons.swap_horiz, color: Theme.of(context).primaryColor),
             onPressed: () {
-              setState(() {});
+              context.read<LanguageProvider>().language1.code != 'auto'
+                  ? context.read<LanguageProvider>().languageSwap()
+                  : ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content:
+                          Text('Second language cannot be \'Automatic\'')));
             },
           ),
           Expanded(
               child: InkWell(
-                  onTap: () {},
+                  onTap: () {
+                    _chooseSecondLanguage('Translate to', false);
+                  },
                   child: Center(
                       child: Text(
-                    _language2,
+                    context
+                        .watch<LanguageProvider>()
+                        .language2
+                        .name, //_language2.name,
                     style: TextStyle(
                         color: Theme.of(context).primaryColor,
                         fontWeight: FontWeight.bold),

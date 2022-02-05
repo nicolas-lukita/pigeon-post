@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:pigeon_post/providers/language_provider.dart';
 import 'package:pigeon_post/widgets/message_bubble.dart';
+import 'package:provider/src/provider.dart';
+import 'package:translator/translator.dart';
 
 class Message extends StatefulWidget {
   final String currentUid;
@@ -17,7 +20,6 @@ class _MessageState extends State<Message> {
   Future<bool> _checkCurrentUser(String userId) async {
     final user = await FirebaseAuth.instance.currentUser();
     final userUId = user.uid;
-    print(userId == userUId);
     return userId == userUId;
   }
 
@@ -50,6 +52,9 @@ class _MessageState extends State<Message> {
                 .orderBy('sentAt', descending: true)
                 .snapshots(),
             builder: (ctx, chatSnapShot) {
+              if (chatSnapShot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
               final chatDocs = chatSnapShot.data!.documents;
               return ListView.builder(
                   reverse: true,
@@ -65,8 +70,10 @@ class _MessageState extends State<Message> {
                       return MessageBubble(
                         username: chatDocs[index]['username'],
                         message: chatDocs[index]['text'],
+                        translatedMessage: 'snapshot.data',
                         isMe: chatDocs[index]['sender'] == userUId,
                       );
+                      ;
                     } else {
                       return SizedBox(
                         height: 0,

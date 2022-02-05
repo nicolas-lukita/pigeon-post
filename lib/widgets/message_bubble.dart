@@ -4,6 +4,7 @@ class MessageBubble extends StatelessWidget {
   //final Key key;
   final String username;
   final String message;
+  final String translatedMessage;
   final bool isMe;
 
   MessageBubble(
@@ -11,6 +12,7 @@ class MessageBubble extends StatelessWidget {
       //required this.key,
       required this.username,
       required this.message,
+      required this.translatedMessage,
       required this.isMe});
 
   @override
@@ -47,8 +49,8 @@ class MessageBubble extends StatelessWidget {
               message,
               style: const TextStyle(color: Colors.white),
             ),
-            const Text(
-              '[translated message]',
+            Text(
+              translatedMessage,
               style:
                   TextStyle(color: Colors.white54, fontStyle: FontStyle.italic),
             )

@@ -1,11 +1,17 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:pigeon_post/pages/language_page.dart';
+import 'package:pigeon_post/providers/language_provider.dart';
 import 'screens/home_screen.dart';
 import './screens/login_screen.dart';
 import './screens/message_screen.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MultiProvider(
+    providers: [ChangeNotifierProvider(create: (_) => LanguageProvider())],
+    child: const MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -35,6 +41,7 @@ class MyApp extends StatelessWidget {
         LoginScreen.routeName: (ctx) => const LoginScreen(),
         MessageScreen.routeName: (ctx) => const MessageScreen(),
         HomeScreen.routeName: (ctx) => const HomeScreen(),
+        //LanguagePage.routeName: (ctx) => const LanguagePage(),
       },
     );
   }
