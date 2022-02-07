@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:pigeon_post/api/translator_api.dart';
 import 'package:pigeon_post/providers/language_provider.dart';
 import 'package:pigeon_post/widgets/message_bubble.dart';
 import 'package:provider/src/provider.dart';
 import 'package:translator/translator.dart';
+import './message_translator.dart';
 
 class Message extends StatefulWidget {
   final String currentUid;
@@ -67,15 +69,20 @@ class _MessageState extends State<Message> {
                         (chatDocs[index]['sender'] == widget.receiverUid ||
                             chatDocs[index]['receiver'] ==
                                 widget.receiverUid)) {
-                      return MessageBubble(
-                        username: chatDocs[index]['username'],
-                        message: chatDocs[index]['text'],
-                        translatedMessage: 'snapshot.data',
-                        isMe: chatDocs[index]['sender'] == userUId,
-                      );
-                      ;
+                      return MessageTranslator(
+                          text: chatDocs[index]['text'],
+                          language1Code:
+                              context.watch<LanguageProvider>().language1.code,
+                          language2Code:
+                              context.watch<LanguageProvider>().language2.code,
+                          builder: (translatedMessage) => MessageBubble(
+                                username: chatDocs[index]['username'],
+                                message: chatDocs[index]['text'],
+                                translatedMessage: translatedMessage,
+                                isMe: chatDocs[index]['sender'] == userUId,
+                              ));
                     } else {
-                      return SizedBox(
+                      return const SizedBox(
                         height: 0,
                       );
                     }
