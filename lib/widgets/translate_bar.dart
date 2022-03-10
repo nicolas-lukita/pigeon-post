@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pigeon_post/pages/language_page.dart';
 import 'package:pigeon_post/providers/language_provider.dart';
-import 'package:provider/src/provider.dart';
-import '../models/language.dart';
+import 'package:provider/provider.dart';
 
 class TranslateBar extends StatefulWidget {
   const TranslateBar({Key? key}) : super(key: key);
@@ -48,10 +47,7 @@ class _TranslateBarState extends State<TranslateBar> {
                   },
                   child: Center(
                       child: Text(
-                    context
-                        .watch<LanguageProvider>()
-                        .language1
-                        .name, //_language1.name,
+                    context.watch<LanguageProvider>().language1.name,
                     style: TextStyle(
                         color: Theme.of(context).primaryColor,
                         fontWeight: FontWeight.bold),
@@ -73,10 +69,7 @@ class _TranslateBarState extends State<TranslateBar> {
                   },
                   child: Center(
                       child: Text(
-                    context
-                        .watch<LanguageProvider>()
-                        .language2
-                        .name, //_language2.name,
+                    context.watch<LanguageProvider>().language2.name,
                     style: TextStyle(
                         color: Theme.of(context).primaryColor,
                         fontWeight: FontWeight.bold),

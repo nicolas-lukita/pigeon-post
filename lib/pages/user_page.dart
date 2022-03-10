@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pigeon_post/screens/message_screen.dart';
 import 'package:pigeon_post/widgets/friend_tile.dart';
+import '../models/date_formatter.dart';
 
 class userPage extends StatefulWidget {
   final String currentUser;
@@ -38,7 +39,8 @@ class _userPageState extends State<userPage> {
                               arguments: {
                                 'receiverUsername': userInfo[index]['username'],
                                 'receiverUid': receiverId,
-                                'currentUid': widget.currentUser
+                                'currentUid': widget.currentUser,
+                                'userImage': userInfo[index]['image_url']
                               });
                         },
                         child: StreamBuilder<QuerySnapshot>(
@@ -53,6 +55,7 @@ class _userPageState extends State<userPage> {
                                     child: CircularProgressIndicator());
                               }
                               String recentMessage = '';
+                              late DateTime recentTime;
                               final chatDocs = chatSnapShot.data!.documents;
                               //get the most recent message
                               for (int i = 0; i < chatDocs.length; i++) {
@@ -63,6 +66,7 @@ class _userPageState extends State<userPage> {
                                             widget.currentUser &&
                                         chatDocs[i]['sender'] == receiverId)) {
                                   recentMessage = chatDocs[i]['text'];
+                                  recentTime = chatDocs[i]['timeSent'].toDate();
                                   break;
                                 }
                               }
@@ -73,7 +77,8 @@ class _userPageState extends State<userPage> {
                                         userName: userInfo[index]['username'],
                                         userImage: userInfo[index]['image_url'],
                                         recentMessage: recentMessage,
-                                      )
+                                        recentTime: DateFormatter()
+                                            .getVerboseDateTime(recentTime))
                                     : null,
                               );
                             }),

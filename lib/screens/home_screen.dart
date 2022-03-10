@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pigeon_post/pages/user_page.dart';
 import '../widgets/friend_tile.dart';
+import '../pages/search_user_page.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -44,76 +45,98 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Friends List',
-          style: TextStyle(
-              color: Colors.white, fontSize: 22, fontWeight: FontWeight.w600),
-        ),
-        backgroundColor: Theme.of(context).splashColor,
-        elevation: 0,
-        actions: <Widget>[
-          Padding(
-            padding: EdgeInsets.only(right: 0),
-            child: Icon(Icons.search),
+        appBar: AppBar(
+          title: const Text(
+            'Friends List',
+            style: TextStyle(
+                color: Colors.white, fontSize: 22, fontWeight: FontWeight.w600),
           ),
-          Padding(
-            padding: EdgeInsets.only(right: 15),
-            child: DropdownButton(
-              icon: const Icon(Icons.more_vert, color: Colors.white),
-              items: [
-                DropdownMenuItem(
-                  child: Container(
-                    child: Row(
-                      children: const <Widget>[
-                        Text(
-                          'Logout',
-                          style: TextStyle(color: Colors.black),
-                        )
-                      ],
-                    ),
-                  ),
-                  value: 'logout',
-                )
-              ],
-              onChanged: (itemIdentifier) {
-                if (itemIdentifier == 'logout') {
-                  FirebaseAuth.instance.signOut();
-                }
-              },
-            ),
-          )
-        ],
-        bottom: TabBar(
-          tabs: const [
-            Tab(
-              icon: Icon(Icons.camera_alt),
-            ),
-            Tab(
-              child: Text("Chats"),
-            ),
-            Tab(
-              child: Text("Status"),
-            ),
-            Tab(
-              child: Text("Calls"),
-            )
+          backgroundColor: Theme.of(context).splashColor,
+          elevation: 0,
+          actions: <Widget>[
+            // InkWell(
+            //   onTap: () {
+            //     Navigator.push(
+            //         context,
+            //         MaterialPageRoute(
+            //             builder: (context) => SearchUserPage(
+            //                   currentUser: userUId,
+            //                 )));
+            //   },
+            //   child: const Padding(
+            //     padding: EdgeInsets.only(right: 0),
+            //     child: Icon(Icons.search),
+            //   ),
+            // ),
+            Padding(
+                padding: const EdgeInsets.only(right: 15, left: 15),
+                // child: DropdownButton(
+                //   icon: const Icon(Icons.more_vert, color: Colors.white),
+                //   items: [
+                //     DropdownMenuItem(
+                //       child: Container(
+                //         child: Row(
+                //           children: const <Widget>[
+                //             Text(
+                //               'Logout',
+                //               style: TextStyle(color: Colors.black),
+                //             )
+                //           ],
+                //         ),
+                //       ),
+                //       value: 'logout',
+                //     )
+                //   ],
+                //   onChanged: (itemIdentifier) {
+                //     if (itemIdentifier == 'logout') {
+                //       FirebaseAuth.instance.signOut();
+                //     }
+                //   },
+                // ),
+                child: InkWell(
+                  child: const Center(
+                      child: Text(
+                    'Logout',
+                    style:
+                        TextStyle(fontWeight: FontWeight.normal, fontSize: 18),
+                  )),
+                  onTap: () {
+                    FirebaseAuth.instance.signOut();
+                  },
+                ))
           ],
-          indicatorColor: Colors.white,
-          controller: _tabController,
+          // bottom: TabBar(
+          //   tabs: const [
+          //     Tab(
+          //       icon: Icon(Icons.camera_alt),
+          //     ),
+          //     Tab(
+          //       child: Text("Chats"),
+          //     ),
+          //     Tab(
+          //       child: Text("Status"),
+          //     ),
+          //     Tab(
+          //       child: Text("Calls"),
+          //     )
+          //   ],
+          //   indicatorColor: Colors.white,
+          //   controller: _tabController,
+          // ),
         ),
-      ),
-      body: TabBarView(
-        children: [
-          Icon(Icons.camera_alt),
-          userPage(
-            currentUser: userUId,
-          ),
-          Text('Status Screen'),
-          Text('Call Screen')
-        ],
-        controller: _tabController,
-      ),
-    );
+        // body: TabBarView(
+        //   children: [
+        //     Icon(Icons.camera_alt),
+        //     userPage(
+        //       currentUser: userUId,
+        //     ),
+        //     Text('Status Screen'),
+        //     Text('Call Screen')
+        //   ],
+        //   controller: _tabController,
+        // ),
+        body: userPage(
+          currentUser: userUId,
+        ));
   }
 }

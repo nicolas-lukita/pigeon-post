@@ -4,23 +4,25 @@ class FriendTile extends StatelessWidget {
   final String userName;
   final String userImage;
   final String recentMessage;
+  final String recentTime;
   const FriendTile(
       {Key? key,
       required this.userName,
       required this.userImage,
-      required this.recentMessage})
+      required this.recentMessage,
+      required this.recentTime})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-        margin: EdgeInsets.only(top: 10, right: 15, left: 15),
+        margin: const EdgeInsets.only(top: 10, right: 15, left: 15),
         child: Column(
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                Container(
+                SizedBox(
                   height: 55,
                   width: 55,
                   child: CircleAvatar(
@@ -28,7 +30,7 @@ class FriendTile extends StatelessWidget {
                     backgroundImage: NetworkImage(userImage),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 15,
                 ),
                 Expanded(
@@ -36,11 +38,11 @@ class FriendTile extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        "$userName",
-                        style: TextStyle(
+                        userName,
+                        style: const TextStyle(
                             fontSize: 18, fontWeight: FontWeight.w500),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 5,
                       ),
                       Text(
@@ -51,11 +53,11 @@ class FriendTile extends StatelessWidget {
                     ],
                   ),
                 ),
-                Container(width: 35, child: Text("time"))
+                SizedBox(width: 65, child: Text(recentTime))
               ],
             ),
-            Padding(
-              padding: const EdgeInsets.only(left: 10, right: 10),
+            const Padding(
+              padding: EdgeInsets.only(left: 10, right: 10),
               child: Divider(
                 thickness: 1,
               ),

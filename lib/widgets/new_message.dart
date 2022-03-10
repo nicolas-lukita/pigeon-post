@@ -57,6 +57,7 @@ class _NewMessageState extends State<NewMessage> {
                     _messageContent = value;
                   });
                 },
+                onSubmitted: (value) => _sendMessage(),
               ),
             ),
           ),

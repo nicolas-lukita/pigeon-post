@@ -7,13 +7,14 @@ class MessageBubble extends StatelessWidget {
   final String translatedMessage;
   final bool isMe;
 
-  MessageBubble(
-      {
+  const MessageBubble(
+      {Key? key,
       //required this.key,
       required this.username,
       required this.message,
       required this.translatedMessage,
-      required this.isMe});
+      required this.isMe})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -38,22 +39,27 @@ class MessageBubble extends StatelessWidget {
           margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
           padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
           child: Column(children: <Widget>[
-            Text(
-              username,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
+            // Text(
+            //   username,
+            //   style: const TextStyle(
+            //     fontWeight: FontWeight.bold,
+            //     color: Colors.white,
+            //   ),
+            // ),
+            FittedBox(
+              fit: BoxFit.fitWidth,
+              child: Text(
+                message,
+                style: const TextStyle(color: Colors.white, fontSize: 17),
               ),
             ),
-            Text(
-              message,
-              style: const TextStyle(color: Colors.white),
-            ),
-            Text(
+            translatedMessage != '' ? Text(
               translatedMessage,
-              style:
-                  TextStyle(color: Colors.white54, fontStyle: FontStyle.italic),
-            )
+              style: const TextStyle(
+                  color: Colors.white54,
+                  fontStyle: FontStyle.italic,
+                  fontWeight: FontWeight.bold),
+            ) : const SizedBox(height:0)
           ]),
         )
       ],
