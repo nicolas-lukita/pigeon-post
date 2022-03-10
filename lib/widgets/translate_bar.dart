@@ -50,7 +50,8 @@ class _TranslateBarState extends State<TranslateBar> {
                     context.watch<LanguageProvider>().language1.name,
                     style: TextStyle(
                         color: Theme.of(context).primaryColor,
-                        fontWeight: FontWeight.bold),
+                        fontWeight: FontWeight.bold,
+                        fontSize:17),
                   )))),
           IconButton(
             icon: Icon(Icons.swap_horiz, color: Theme.of(context).primaryColor),
@@ -72,7 +73,8 @@ class _TranslateBarState extends State<TranslateBar> {
                     context.watch<LanguageProvider>().language2.name,
                     style: TextStyle(
                         color: Theme.of(context).primaryColor,
-                        fontWeight: FontWeight.bold),
+                        fontWeight: FontWeight.bold,
+                        fontSize:17),
                   ))))
         ],
       ),

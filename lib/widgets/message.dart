@@ -81,6 +81,7 @@ class _MessageState extends State<Message> {
                             builder: (translatedMessage) => MessageBubble(
                                   username: chatDocs[index]['username'],
                                   message: chatDocs[index]['text'],
+                                  timeSent: chatDocs[index]['timeSent'].toDate(),
                                   translatedMessage: translatedMessage,
                                   isMe: chatDocs[index]['sender'] == userUId,
                                 ));
@@ -89,6 +90,7 @@ class _MessageState extends State<Message> {
                           username: chatDocs[index]['username'],
                           message: chatDocs[index]['text'],
                           translatedMessage: '',
+                          timeSent: chatDocs[index]['timeSent'].toDate(),
                           isMe: chatDocs[index]['sender'] == userUId,
                         );
                       }

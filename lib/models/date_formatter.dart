@@ -21,6 +21,6 @@ class DateFormatter {
       return '$weekday, $roughTimeString';
     }
 
-    return '${DateFormat('dMy').format(dateTime)}, $roughTimeString';
+    return DateFormat('yMd').format(dateTime);
   }
 }
