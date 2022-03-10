@@ -7,8 +7,10 @@ import 'screens/home_screen.dart';
 import './screens/login_screen.dart';
 import './screens/message_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_core/firebase_core.dart';
 
-void main() {
+Future main() async {
+
   runApp(MultiProvider(
     providers: [ChangeNotifierProvider(create: (_) => LanguageProvider())],
     child: const MyApp(),

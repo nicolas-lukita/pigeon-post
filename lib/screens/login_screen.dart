@@ -6,6 +6,7 @@ import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
+
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
   static const routeName = '/login-screen';
@@ -15,6 +16,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+
   final _auth = FirebaseAuth.instance;
   var _isLoading = false;
 
@@ -69,7 +71,7 @@ class _LoginScreenState extends State<LoginScreen> {
         _isLoading = false;
       });
     } catch (err) {
-      print(err);
+      debugPrint('$err');
       setState(() {
         _isLoading = false;
       });
@@ -78,11 +80,18 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).accentColor,
-      body: LoginForm(
-        _submitLoginForm,
-        _isLoading,
+    return Container(
+      decoration: const BoxDecoration(
+          image: DecorationImage(
+        image: AssetImage('assets/login-img.jpg'),
+        fit: BoxFit.cover,
+      )),
+      child: Scaffold(
+        backgroundColor: Colors.transparent, //Theme.of(context).accentColor,
+        body: LoginForm(
+          _submitLoginForm,
+          _isLoading,
+        ),
       ),
     );
   }
