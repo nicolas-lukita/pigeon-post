@@ -16,7 +16,6 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-
   final _auth = FirebaseAuth.instance;
   var _isLoading = false;
 
@@ -28,10 +27,12 @@ class _LoginScreenState extends State<LoginScreen> {
       setState(() {
         _isLoading = true;
       });
+      //login function
       if (isLogin) {
         //submit login function
         authResult = await _auth.signInWithEmailAndPassword(
             email: email, password: password); //login with email and password
+      //sign up function
       } else {
         //submit create new account function
         authResult = await _auth.createUserWithEmailAndPassword(

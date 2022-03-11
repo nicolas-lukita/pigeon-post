@@ -20,7 +20,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   void initState() {
     // TODO: implement initState
     super.initState();
-    _tabController = TabController(length: 4, vsync: this, initialIndex: 1)
+    _tabController = TabController(length: 2 /*4*/, vsync: this, initialIndex: 1)
       ..addListener(() {
         setState(() {
           switch (_tabController.index) {
@@ -28,10 +28,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               break;
             case 1:
               break;
-            case 2:
-              break;
-            case 3:
-              break;
+            // case 2:
+            //   break;
+            // case 3:
+            //   break;
           }
         });
       });
@@ -54,20 +54,20 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           backgroundColor: Theme.of(context).splashColor,
           elevation: 0,
           actions: <Widget>[
-            // InkWell(
-            //   onTap: () {
-            //     Navigator.push(
-            //         context,
-            //         MaterialPageRoute(
-            //             builder: (context) => SearchUserPage(
-            //                   currentUser: userUId,
-            //                 )));
-            //   },
-            //   child: const Padding(
-            //     padding: EdgeInsets.only(right: 0),
-            //     child: Icon(Icons.search),
-            //   ),
-            // ),
+            InkWell(
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => SearchUserPage(
+                              currentUser: userUId,
+                            )));
+              },
+              child: const Padding(
+                padding: EdgeInsets.only(right: 0),
+                child: Icon(Icons.search),
+              ),
+            ),
             Padding(
                 padding: const EdgeInsets.only(right: 15, left: 15),
                 // child: DropdownButton(
@@ -105,38 +105,38 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   },
                 ))
           ],
-          // bottom: TabBar(
-          //   tabs: const [
-          //     Tab(
-          //       icon: Icon(Icons.camera_alt),
-          //     ),
-          //     Tab(
-          //       child: Text("Chats"),
-          //     ),
-          //     Tab(
-          //       child: Text("Status"),
-          //     ),
-          //     Tab(
-          //       child: Text("Calls"),
-          //     )
-          //   ],
-          //   indicatorColor: Colors.white,
-          //   controller: _tabController,
-          // ),
+          bottom: TabBar(
+            tabs: const [
+              Tab(
+                icon: Icon(Icons.camera_alt),
+              ),
+              Tab(
+                child: Text("Chats"),
+              ),
+              // Tab(
+              //   child: Text("Status"),
+              // ),
+              // Tab(
+              //   child: Text("Calls"),
+              // )
+            ],
+            indicatorColor: Colors.white,
+            controller: _tabController,
+          ),
         ),
-        // body: TabBarView(
-        //   children: [
-        //     Icon(Icons.camera_alt),
-        //     userPage(
-        //       currentUser: userUId,
-        //     ),
-        //     Text('Status Screen'),
-        //     Text('Call Screen')
-        //   ],
-        //   controller: _tabController,
-        // ),
-        body: userPage(
-          currentUser: userUId,
-        ));
+        body: TabBarView(
+          children: [
+            Icon(Icons.camera_alt),
+            userPage(
+              currentUser: userUId,
+            ),
+            // Text('Status Screen'),
+            // Text('Call Screen')
+          ],
+          controller: _tabController,
+        ),
+        // body: UserSearchPage(//userPage(
+        //   currentUser: userUId,
+        );
   }
 }

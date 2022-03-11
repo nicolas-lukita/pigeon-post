@@ -35,8 +35,6 @@ class _MessageState extends State<Message> {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint("message.dart!!!!");
-    debugPrint('${widget.isTranslate}');
     return FutureBuilder(
         future: FirebaseAuth.instance.currentUser(),
         builder: (ctx, futureSnapshot) {

@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:pigeon_post/screens/message_screen.dart';
 import 'package:pigeon_post/widgets/friend_tile.dart';
+import '../services/database_functions.dart';
 
 class SearchUserPage extends StatefulWidget {
   final String currentUser;
@@ -11,109 +13,116 @@ class SearchUserPage extends StatefulWidget {
 }
 
 class _SearchUserPageState extends State<SearchUserPage> {
-  Widget _showAllUser() {
-    return StreamBuilder<QuerySnapshot>(
-      stream: Firestore.instance
-          .collection('users')
-          //.where('username', isEqualTo: _searchController)
-          .snapshots(),
-      builder: (ctx, userSnapShot) {
-        if (userSnapShot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        final users = userSnapShot.data!.documents;
-        return ListView.builder(
-          itemCount: users.length,
-          itemBuilder: (ctx, index) {
-            return Container(
-              child: users[index].documentID != widget.currentUser &&
-                      users[index]['username'] == _searchController
-                  ? FriendTile(
-                      userName: users[index]['username'],
-                      userImage: users[index]['image_url'],
-                      recentMessage: '',
-                      recentTime: '',
-                    )
-                  : null,
-            );
-          },
-        );
-      },
-    );
+  DatabaseFunctions databaseFunctions = new DatabaseFunctions();
+  TextEditingController searchEditingController = new TextEditingController();
+  late QuerySnapshot searchResultSnapshot;
+  bool isLoading = false;
+  bool haveUserSearched = false;
+
+  initiateSearch() async {
+    if (searchEditingController.text.isNotEmpty) {
+      setState(() {
+        isLoading = true;
+      });
+      await databaseFunctions
+          .searchByUsername(searchEditingController.text)
+          .then((snapshot) {
+        searchResultSnapshot = snapshot;
+        setState(() {
+          isLoading = false;
+          haveUserSearched = true;
+        });
+      });
+    }
   }
 
-  Widget _showSearchedUser() {
-    return StreamBuilder<QuerySnapshot>(
-      stream: Firestore.instance
-          .collection('users')
-          .where('username', isEqualTo: _searchController)
-          .snapshots(),
-      builder: (ctx, userSnapShot) {
-        if (userSnapShot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        final users = userSnapShot.data!.documents;
-        return ListView.builder(
-          itemCount: users.length,
-          itemBuilder: (ctx, index) {
-            return Container(
-              child: users[index].documentID != widget.currentUser
-                  ? FriendTile(
-                      userName: users[index]['username'],
-                      userImage: users[index]['image_url'],
-                      recentMessage: '',
-                      recentTime: '',
-                    )
-                  : null,
-            );
-          },
-        );
-      },
-    );
+  Widget userList() {
+    return haveUserSearched
+        ? ListView.builder(
+            shrinkWrap: true,
+            itemCount: searchResultSnapshot.documents.length,
+            itemBuilder: (context, index) {
+              return userTile(
+                searchResultSnapshot.documents[index].data["username"],
+                searchResultSnapshot.documents[index].data["email"],
+                searchResultSnapshot.documents[index].documentID,
+                searchResultSnapshot.documents[index].data["image_url"],
+              );
+            })
+        : const SizedBox();
   }
 
-  final TextEditingController _searchController = TextEditingController();
+  Widget userTile(
+      String userName, String userEmail, String uid, String userImage) {
+    return GestureDetector(
+        onTap: () {
+          Navigator.pushNamed(context, MessageScreen.routeName, arguments: {
+            'receiverUsername': userName,
+            'receiverUid': uid,
+            'currentUid': widget.currentUser,
+            'userImage': userImage
+          });
+        },
+        child: FriendTile(userName: userName, userImage: userImage, recentMessage: userEmail, recentTime: ''));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Search users'),
+          title: const Text(
+            'Search User',
+            style: TextStyle(
+                color: Colors.white, fontSize: 22, fontWeight: FontWeight.w600),
+          ),
           backgroundColor: Theme.of(context).splashColor,
         ),
         body: Column(
-          children: [
+          children: <Widget>[
             Container(
-                margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+              color: const Color(0x54FFFFFF),
+              child: Container(
+                width: double.infinity,
+                margin: const EdgeInsets.symmetric(vertical: 10),
                 child: TextField(
-                  controller: _searchController,
+                  onSubmitted: (_) {
+                    initiateSearch();
+                  },
+                  controller: searchEditingController,
                   decoration: InputDecoration(
                     hintText: 'Search..',
                     border: InputBorder.none,
-                    focusedBorder: UnderlineInputBorder(
-                        borderSide:
-                            BorderSide(color: Theme.of(context).primaryColor)),
+                    focusedBorder: OutlineInputBorder(
+                        gapPadding: 10,
+                        borderRadius: BorderRadius.circular(50),
+                        borderSide: const BorderSide(
+                          color: Colors.blue,
+                        )),
+                    enabledBorder: OutlineInputBorder(
+                      gapPadding: 10,
+                      borderRadius: BorderRadius.circular(50.0),
+                      borderSide: const BorderSide(
+                        color: Colors.grey,
+                        width: 2.0,
+                      ),
+                    ),
+                    focusedErrorBorder: OutlineInputBorder(
+                        gapPadding: 10,
+                        borderRadius: BorderRadius.circular(50),
+                        borderSide: const BorderSide(
+                          color: Colors.red,
+                        )),
                     prefixIcon: const Icon(
                       Icons.search,
                       size: 24,
                       color: Colors.grey,
                     ),
-                    suffixIcon: (_searchController.text.isNotEmpty)
-                        ? IconButton(
-                            icon: const Icon(Icons.close),
-                            color: Colors.grey,
-                            //clear button ('x' button)
-                            onPressed: () {
-                              setState(() {
-                                _searchController.text = ""; // Reset the text
-                              });
-                            })
-                        : null,
                   ),
-                  onChanged: (txt) {
-                    setState(() {});
-                  },
-                )),
-            Expanded(child: _showAllUser())
+                ),
+              ),
+            ),
+            userList(),
           ],
         ));
   }
