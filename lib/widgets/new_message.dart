@@ -1,10 +1,19 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:pigeon_post/helper/current_user_data.dart';
+import 'package:pigeon_post/helper/helper_functions.dart';
 
 class NewMessage extends StatefulWidget {
   final String receiverUid;
-  const NewMessage({Key? key, required this.receiverUid}) : super(key: key);
+  final String receiverUserName;
+  final String chatRoomId;
+  const NewMessage(
+      {Key? key,
+      required this.receiverUid,
+      required this.receiverUserName,
+      required this.chatRoomId})
+      : super(key: key);
 
   @override
   State<NewMessage> createState() => _NewMessageState();
@@ -13,6 +22,7 @@ class NewMessage extends StatefulWidget {
 class _NewMessageState extends State<NewMessage> {
   final _controller = TextEditingController();
   var _messageContent = '';
+  late String chatRoomId;
 
   void _sendMessage() async {
     FocusScope.of(context).unfocus();
@@ -21,13 +31,24 @@ class _NewMessageState extends State<NewMessage> {
     final userData =
         await Firestore.instance.collection('users').document(user.uid).get();
 
-    Firestore.instance.collection('chat').add({
+    _controller.clear();
+
+    //send message to chatroom
+    Firestore.instance
+        .collection("chatRoom")
+        .document(widget.chatRoomId)
+        .collection("chats")
+        .add({
       'text': _messageContent,
-      'sentAt': Timestamp.now(),
       'sender': user.uid,
       'username': userData['username'],
       'receiver': widget.receiverUid,
       'timeSent': DateTime.now(),
+    });
+
+    Firestore.instance.collection("chatRoom").document(widget.chatRoomId).updateData({
+      'recentMessage': _messageContent,
+      'recentTime': DateTime.now(),
     });
 
     _controller.clear();

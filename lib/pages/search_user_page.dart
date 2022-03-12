@@ -66,6 +66,7 @@ class _SearchUserPageState extends State<SearchUserPage> {
         child: FriendTile(userName: userName, userImage: userImage, recentMessage: userEmail, recentTime: ''));
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

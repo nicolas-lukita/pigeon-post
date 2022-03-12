@@ -1,11 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:pigeon_post/services/database_functions.dart';
 import '../widgets/login_form.dart';
 import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-
+import '../helper/helper_functions.dart';
+import '../helper/current_user_data.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -32,8 +34,23 @@ class _LoginScreenState extends State<LoginScreen> {
         //submit login function
         authResult = await _auth.signInWithEmailAndPassword(
             email: email, password: password); //login with email and password
-      //sign up function
+        FirebaseUser user = authResult.user;
+        String userUid = user.uid;
+
+        //get user document
+        QuerySnapshot userInfoSnapshot =
+            await DatabaseFunctions().searchByUserEmail(email);
+        //save current logged in user data in shared preference
+        HelperFunctions.saveUserLoggedInSharedPreference(true);
+        HelperFunctions.saveUserEmailSharedPreference(
+            userInfoSnapshot.documents[0].data["email"]);
+        HelperFunctions.saveUserNameSharedPreference(
+            userInfoSnapshot.documents[0].data["username"]);
+        CurrentUserData.username =
+            userInfoSnapshot.documents[0].data["username"];
+        CurrentUserData.userEmail = userInfoSnapshot.documents[0].data["email"];
       } else {
+        //sign up function
         //submit create new account function
         authResult = await _auth.createUserWithEmailAndPassword(
             email: email, password: password); //create new account
@@ -55,6 +72,13 @@ class _LoginScreenState extends State<LoginScreen> {
           'email': email,
           'image_url': url,
         }); //store data in users collection database
+
+        //locally store data in shared preference
+        HelperFunctions.saveUserLoggedInSharedPreference(true);
+        HelperFunctions.saveUserEmailSharedPreference(email);
+        HelperFunctions.saveUserNameSharedPreference(username);
+        CurrentUserData.username = username;
+        CurrentUserData.userEmail = email;
       }
     } on PlatformException catch (err) {
       var message = 'An error occured, please check your credentials!';
@@ -88,7 +112,7 @@ class _LoginScreenState extends State<LoginScreen> {
         fit: BoxFit.cover,
       )),
       child: Scaffold(
-        backgroundColor: Colors.transparent, //Theme.of(context).accentColor,
+        backgroundColor: Colors.transparent, 
         body: LoginForm(
           _submitLoginForm,
           _isLoading,

@@ -54,9 +54,7 @@ class _LoginFormState extends State<LoginForm> {
   Widget build(BuildContext context) {
     return Center(
       child: Container(
-        //shape:
-        //    RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
-        color: Colors.transparent, //const Color(0xFFfaf8f5).withOpacity(0.8),
+        color: Colors.transparent,
         margin: const EdgeInsets.all(20),
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 23),
@@ -225,6 +223,10 @@ class _LoginFormState extends State<LoginForm> {
                       }
                       return null;
                     },
+                    onFieldSubmitted: (value) {
+                      _userPassword = value;
+                      _submitForm();
+                    },
                     onSaved: (value) {
                       _userPassword = value!;
                     }),
@@ -258,7 +260,8 @@ class _LoginFormState extends State<LoginForm> {
                         (_isLogin)
                             ? 'Create a new account'
                             : 'I already have an account',
-                        style: const TextStyle(color: Colors.white, fontSize: 17))),
+                        style: const TextStyle(
+                            color: Colors.white, fontSize: 17))),
               ])),
         ),
       ),

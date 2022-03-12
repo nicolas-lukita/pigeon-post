@@ -23,11 +23,10 @@ class _MessageScreenState extends State<MessageScreen> {
   @override
   Widget build(BuildContext context) {
     final _arguments = ModalRoute.of(context)!.settings.arguments as Map;
-    // arguments contains: receiverUsername, receiverUid, currentUid, userImage
+    // arguments contains: receiverUsername, receiverUid, currentUid, userImage, chatRoomId
 
     return Scaffold(
       appBar: AppBar(
-        //leading: BackButton(),
         title: Row(
           children: [
             CircleAvatar(
@@ -39,57 +38,8 @@ class _MessageScreenState extends State<MessageScreen> {
           ],
         ),
         backgroundColor: const Color(
-            0xff47648a), //Theme.of(context).primaryColor, // Color(0xff72abba),
+            0xff47648a), 
         actions: [
-          // DropdownButton(
-          //   dropdownColor: const Color(0xcc4C5B6B),
-          //   underline: const SizedBox(), //remove underline below button
-          //   icon: const Icon(Icons.more_vert, color: Colors.white),
-          //   items: [
-          //     DropdownMenuItem(
-          //       child: Row(
-          //         children: const <Widget>[
-          //           Text(
-          //             'Logout',
-          //             style: TextStyle(color: Color(0xffF7F7FF)),
-          //           ),
-          //         ],
-          //       ),
-          //       value: 'logout',
-          //     ),
-          //     DropdownMenuItem(
-          //       child: Row(
-          //         children: const <Widget>[
-          //           Text(
-          //             'translate?',
-          //             style: TextStyle(color: Color(0xffF7F7FF)),
-          //           ),
-          //         ],
-          //       ),
-          //       value: 'translateToggle',
-          //     ),
-          //   ],
-          //   onChanged: (itemIdentifier) {
-          //     if (itemIdentifier == 'logout') {
-          //       FirebaseAuth.instance.signOut();
-          //     }
-          //     switch (itemIdentifier) {
-          //       case 'logout':
-          //         {
-          //           FirebaseAuth.instance.signOut();
-          //         }
-          //         break;
-          //       case 'translateToggle':
-          //         {
-          //           debugPrint("TRANSLATE TOGGLE PRESSED");
-          //           translateToggleHandler();
-          //           debugPrint('$isTranslate');
-          //         }
-          //         break;
-          //     }
-          //   },
-          // )
-
           Center(
               child: Switch(
                   value: isTranslate,
@@ -104,18 +54,22 @@ class _MessageScreenState extends State<MessageScreen> {
       ),
       body: Container(
           color: const Color(
-              0xfff4e2d0), //Theme.of(context).splashColor, // Color(0xfffaf8f5), //Theme.of(context).backgroundColor,
+              0xfff4e2d0), 
           child: Column(
             children: <Widget>[
               const TranslateBar(),
               Expanded(
-                  child: Message(
-                currentUid: _arguments['currentUid'],
-                receiverUid: _arguments['receiverUid'],
-                isTranslate: isTranslate,
-              )),
+                child: Message(
+                  currentUid: _arguments['currentUid'],
+                  receiverUid: _arguments['receiverUid'],
+                  chatRoomId: _arguments['chatRoomId'],
+                  isTranslate: isTranslate,
+                )
+              ),
               NewMessage(
                 receiverUid: _arguments['receiverUid'],
+                receiverUserName: _arguments['receiverUsername'],
+                chatRoomId: _arguments['chatRoomId'],
               )
             ],
           )),

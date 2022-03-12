@@ -43,6 +43,8 @@ dependencies:
   intl: ^0.17.0
   firebase_core: ^0.4.5
   google_sign_in: ^4.5.9
+  shared_preferences: ^2.0.13
+  shared_preferences_web: ^2.0.3
 
 dev_dependencies:
   flutter_test:
