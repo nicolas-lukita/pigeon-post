@@ -24,11 +24,11 @@ class _userPageState extends State<userPage> {
 
     return StreamBuilder<QuerySnapshot>(
         stream: Firestore.instance.collection('users').snapshots(),
-        builder: (ctx, userSnapShot) {
-          if (userSnapShot.connectionState == ConnectionState.waiting) {
+        builder: (ctx, userSnapshot) {
+          if (userSnapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
-          final userInfo = userSnapShot.data!.documents;
+          final userInfo = userSnapshot.data!.documents;
           return ListView.builder(
               itemCount: userInfo.length,
               itemBuilder: (listviewCTX, index) {
@@ -70,6 +70,7 @@ class _userPageState extends State<userPage> {
                         stream: Firestore.instance
                             .collection('chatRoom')
                             .where('chatRoomId', isEqualTo: chatRoomId)
+                            .orderBy("recentTime", descending: true)
                             .snapshots(),
                         builder: (ctx, chatRoomSnapshot) {
                           if (chatRoomSnapshot.connectionState ==

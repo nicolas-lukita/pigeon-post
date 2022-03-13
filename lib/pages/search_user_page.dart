@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:pigeon_post/helper/current_user_data.dart';
+import 'package:pigeon_post/helper/helper_functions.dart';
 import 'package:pigeon_post/screens/message_screen.dart';
 import 'package:pigeon_post/widgets/friend_tile.dart';
 import '../services/database_functions.dart';
@@ -42,30 +44,77 @@ class _SearchUserPageState extends State<SearchUserPage> {
             shrinkWrap: true,
             itemCount: searchResultSnapshot.documents.length,
             itemBuilder: (context, index) {
-              return userTile(
-                searchResultSnapshot.documents[index].data["username"],
-                searchResultSnapshot.documents[index].data["email"],
-                searchResultSnapshot.documents[index].documentID,
-                searchResultSnapshot.documents[index].data["image_url"],
-              );
+              if (searchResultSnapshot.documents[index].documentID !=
+                  CurrentUserData.userId) {
+                return userTile(
+                  searchResultSnapshot.documents[index].data["username"],
+                  searchResultSnapshot.documents[index].data["email"],
+                  searchResultSnapshot.documents[index].documentID,
+                  searchResultSnapshot.documents[index].data["image_url"],
+                );
+              } else {
+                return const SizedBox();
+              }
             })
-        : const SizedBox();
+        : StreamBuilder<QuerySnapshot>(
+            stream: Firestore.instance.collection('users').snapshots(),
+            builder: (ctx, userSnapshot) {
+              if (userSnapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              final userInfo = userSnapshot.data!.documents;
+              return ListView.builder(
+                  itemCount: userInfo.length,
+                  itemBuilder: (listViewCtx, index) {
+                    if (userInfo[index].documentID == CurrentUserData.userId) {
+                      return const SizedBox(height:0, width:0);
+                    }
+                    return userTile(
+                      userInfo[index]['username'],
+                      userInfo[index]['email'],
+                      userInfo[index].documentID,
+                      userInfo[index]["image_url"],
+                    );
+                  });
+            });
   }
 
   Widget userTile(
       String userName, String userEmail, String uid, String userImage) {
     return GestureDetector(
         onTap: () {
+          //generate chatroomid
+          String chatRoomId =
+              HelperFunctions.chatRoomIdGenerator(CurrentUserData.userId, uid);
+
+          DatabaseFunctions().checkChatRoomExistance(chatRoomId).then((value) =>
+              !value
+                  ? Firestore.instance
+                      .collection("chatRoom")
+                      .document(chatRoomId)
+                      .setData({
+                      "users": [CurrentUserData.userId, uid],
+                      "chatRoomId": chatRoomId,
+                      "Usernames": [CurrentUserData.username, userName],
+                      'recentMessage': '',
+                      'recentTime': null,
+                    })
+                  : null);
+
           Navigator.pushNamed(context, MessageScreen.routeName, arguments: {
             'receiverUsername': userName,
             'receiverUid': uid,
-            'currentUid': widget.currentUser,
-            'userImage': userImage
+            'currentUid': CurrentUserData.userId,
+            'userImage': userImage,
+            'chatRoomId': chatRoomId,
           });
         },
-        child: FriendTile(userName: userName, userImage: userImage, recentMessage: userEmail, recentTime: ''));
+        child: FriendTile(
+            userName: userName,
+            userImage: userImage,
+            recentMessage: userEmail,
+            recentTime: ''));
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -123,7 +172,7 @@ class _SearchUserPageState extends State<SearchUserPage> {
                 ),
               ),
             ),
-            userList(),
+            Expanded(child: userList()),
           ],
         ));
   }
