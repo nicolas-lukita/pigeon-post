@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:pigeon_post/helper/current_user_data.dart';
-import 'package:pigeon_post/helper/helper_functions.dart';
-import 'package:pigeon_post/screens/message_screen.dart';
-import 'package:pigeon_post/widgets/friend_tile.dart';
+import '../helper/current_user_data.dart';
+import '../helper/helper_functions.dart';
+import '../screens/message_screen.dart';
+import '../widgets/home/friend_tile.dart';
 import '../services/database_functions.dart';
 
 class SearchUserPage extends StatefulWidget {
@@ -15,8 +15,8 @@ class SearchUserPage extends StatefulWidget {
 }
 
 class _SearchUserPageState extends State<SearchUserPage> {
-  DatabaseFunctions databaseFunctions = new DatabaseFunctions();
-  TextEditingController searchEditingController = new TextEditingController();
+  DatabaseFunctions databaseFunctions = DatabaseFunctions();
+  TextEditingController searchEditingController = TextEditingController();
   late QuerySnapshot searchResultSnapshot;
   bool isLoading = false;
   bool haveUserSearched = false;

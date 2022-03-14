@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:pigeon_post/helper/helper_functions.dart';
-import 'package:pigeon_post/pages/user_page.dart';
-import '../widgets/friend_tile.dart';
+import '../helper/helper_functions.dart';
+import '../pages/chatRoom_list_page.dart';
+import '../pages/user_page.dart';
 import '../pages/search_user_page.dart';
 import '../helper/current_user_data.dart';
 
@@ -21,52 +21,64 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   @override
   void initState() {
-    // TODO: implement initState
-    super.initState();
-    _tabController =
-        TabController(length: 2 /*4*/, vsync: this, initialIndex: 1)
-          ..addListener(() {
-            setState(() {
-              switch (_tabController.index) {
-                case 0:
-                  break;
-                case 1:
-                  break;
-                // case 2:
-                //   break;
-                // case 3:
-                //   break;
-              }
-            });
-          });
+    _tabController = TabController(length: 2, vsync: this, initialIndex: 0)
+      ..addListener(() {
+        setState(() {
+          switch (_tabController.index) {
+            case 0:
+              break;
+            case 1:
+              break;
+          }
+        });
+      });
+
     FirebaseAuth.instance.currentUser().then((user) {
       setState(() {
         userUId = user.uid;
         CurrentUserData.userId = user.uid;
+        HelperFunctions.saveUserEmailSharedPreference(user.uid);
+        WidgetsBinding.instance
+            ?.addPostFrameCallback((_) => _getInitUserData());
       });
     });
+
+    print('homescreen init state');
+    super.initState();
   }
 
-  getCurrentUserData() async {
-    CurrentUserData.username =
-        (await HelperFunctions.getUserNameSharedPreference())!;
+  _getInitUserData() async {
     CurrentUserData.userEmail =
         (await HelperFunctions.getUserEmailSharedPreference())!;
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    getCurrentUserData();
+    await Firestore.instance
+        .collection('users')
+        .document(CurrentUserData.userId)
+        .get()
+        .then((DocumentSnapshot documentSnapshot) {
+      if (documentSnapshot.exists) {
+        HelperFunctions.saveUserNameSharedPreference(
+            documentSnapshot.data['username']);
+        HelperFunctions.saveUserImageUrlSharedPreference(
+            documentSnapshot.data['image_url']);
+        HelperFunctions.saveUserEmailSharedPreference(
+            documentSnapshot.data['email']);
+        CurrentUserData.username = documentSnapshot.data['username'];
+        CurrentUserData.imageUrl = documentSnapshot.data['image_url'];
+        CurrentUserData.userEmail = documentSnapshot.data['email'];
+        setState(() {});
+      } else {
+        print('Document does not exist on the database');
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Friends List',
-          style: TextStyle(
+        title: Text(
+          'Hello, ${CurrentUserData.username}',
+          style: const TextStyle(
               color: Colors.white, fontSize: 22, fontWeight: FontWeight.w600),
         ),
         backgroundColor: Theme.of(context).splashColor,
@@ -102,35 +114,23 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         bottom: TabBar(
           tabs: const [
             Tab(
-              icon: Icon(Icons.camera_alt),
+              icon: Icon(Icons.person),
             ),
             Tab(
-              child: Text("Chats"),
+              icon: Icon(Icons.chat_bubble),
             ),
-            // Tab(
-            //   child: Text("Status"),
-            // ),
-            // Tab(
-            //   child: Text("Calls"),
-            // )
           ],
           indicatorColor: Colors.white,
           controller: _tabController,
         ),
       ),
       body: TabBarView(
-        children: [
-          Icon(Icons.camera_alt),
-          userPage(
-            currentUser: userUId,
-          ),
-          // Text('Status Screen'),
-          // Text('Call Screen')
+        children: const [
+          userPage(),
+          ChatRoomListPage(),
         ],
         controller: _tabController,
       ),
-      // body: UserSearchPage(//userPage(
-      //   currentUser: userUId,
     );
   }
 }

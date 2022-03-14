@@ -1,5 +1,5 @@
 import 'package:flutter_sticky_header/flutter_sticky_header.dart';
-import 'package:pigeon_post/widgets/language_tile.dart';
+import '../widgets/chat-room/language_tile.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import '../models/language.dart';

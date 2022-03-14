@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../models/language.dart';
+import '../../models/language.dart';
 
 class LanguageTile extends StatefulWidget {
   final Language language;

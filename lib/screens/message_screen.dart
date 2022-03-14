@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import '../widgets/new_message.dart';
-import '../widgets/message.dart';
-import '../widgets/translate_bar.dart';
+import '../widgets/chat-room/new_message.dart';
+import '../widgets/chat-room/message.dart';
+import '../widgets/chat-room/translate_bar.dart';
 
 class MessageScreen extends StatefulWidget {
   MessageScreen({Key? key}) : super(key: key);

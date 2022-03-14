@@ -35,7 +35,7 @@ class _UserImagePickerState extends State<UserImagePicker> {
       CircleAvatar(
         radius: 70,
         backgroundColor: Colors.grey,
-        backgroundImage: _pickedImage != null ? FileImage(_pickedImage!) : null,
+        backgroundImage: _pickedImage != null ? FileImage(_pickedImage!) : const AssetImage('assets/profile-image-placeholder.jpg') as ImageProvider,
       ),
       TextButton.icon(
         style: TextButton.styleFrom(primary: Theme.of(context).primaryColor),

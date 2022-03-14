@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/src/provider.dart';
 import '../models/language.dart';
 import 'package:flutter_sticky_header/flutter_sticky_header.dart';
-import '../widgets/language_tile.dart';
-import '../providers/language_provider.dart';
+import '../widgets/chat-room/language_tile.dart';
 import '../providers/language_provider.dart';
 
 class LanguagePage extends StatefulWidget {

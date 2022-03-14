@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import './user_image_picker.dart';
+import 'user_image_picker.dart';
 import 'dart:io';
 import 'package:google_sign_in/google_sign_in.dart';
 

@@ -3,7 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:pigeon_post/helper/current_user_data.dart';
 import 'package:pigeon_post/providers/language_provider.dart';
-import 'package:pigeon_post/widgets/message_bubble.dart';
+import 'package:pigeon_post/widgets/chat-room/message_translator.dart';
+import './message_bubble.dart';
 import 'package:provider/src/provider.dart';
 import './message_translator.dart';
 
@@ -25,16 +26,6 @@ class Message extends StatefulWidget {
 }
 
 class _MessageState extends State<Message> {
-  String userUId = '';
-  @override
-  void initState() {
-    super.initState();
-    FirebaseAuth.instance.currentUser().then((user) {
-      setState(() {
-        userUId = user.uid;
-      });
-    });
-  }
 
   @override
   Widget build(BuildContext context) {

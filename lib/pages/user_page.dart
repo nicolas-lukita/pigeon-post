@@ -5,25 +5,38 @@ import 'package:pigeon_post/helper/current_user_data.dart';
 import 'package:pigeon_post/helper/helper_functions.dart';
 import 'package:pigeon_post/screens/message_screen.dart';
 import 'package:pigeon_post/services/database_functions.dart';
-import 'package:pigeon_post/widgets/friend_tile.dart';
+import 'package:pigeon_post/widgets/home/friend_tile.dart';
+import 'package:pigeon_post/widgets/home/user_button.dart';
 import '../models/date_formatter.dart';
+import '../helper/gestures.dart';
 
 class userPage extends StatefulWidget {
-  final String currentUser;
-  const userPage({Key? key, required this.currentUser}) : super(key: key);
+  const userPage({Key? key}) : super(key: key);
 
   @override
   _userPageState createState() => _userPageState();
 }
 
-class _userPageState extends State<userPage> {
+class _userPageState extends State<userPage>
+    with AutomaticKeepAliveClientMixin<userPage> {
   final FirebaseAuth auth = FirebaseAuth.instance;
+
+  late Stream<QuerySnapshot> userStream;
+
+  @override
+  void initState() {
+    userStream = Firestore.instance
+        .collection('users')
+        .orderBy('username', descending: false)
+        .snapshots();
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-
     return StreamBuilder<QuerySnapshot>(
-        stream: Firestore.instance.collection('users').snapshots(),
+        stream: userStream,
         builder: (ctx, userSnapshot) {
           if (userSnapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -36,61 +49,81 @@ class _userPageState extends State<userPage> {
                 //generate chatroomid
                 String chatRoomId = HelperFunctions.chatRoomIdGenerator(
                     CurrentUserData.userId, receiverId);
-                return GestureDetector(
-                    behavior: HitTestBehavior.opaque,
-                    onTap: () {
-                      DatabaseFunctions()
-                          .checkChatRoomExistance(chatRoomId)
-                          .then((value) => !value
-                              ? Firestore.instance
-                                  .collection("chatRoom")
-                                  .document(chatRoomId)
-                                  .setData({
-                                  "users": [CurrentUserData.userId, receiverId],
-                                  "chatRoomId": chatRoomId,
-                                  "Usernames": [
-                                    CurrentUserData.username,
-                                    userInfo[index]['username']
-                                  ],
-                                  'recentMessage': '',
-                                  'recentTime': null,
-                                })
-                              : null);
 
-                      Navigator.pushNamed(context, MessageScreen.routeName,
-                          arguments: {
-                            'receiverUsername': userInfo[index]['username'],
-                            'receiverUid': receiverId,
-                            'currentUid': CurrentUserData.userId,
-                            'userImage': userInfo[index]['image_url'],
-                            'chatRoomId': chatRoomId,
-                          });
-                    },
-                    child: StreamBuilder<QuerySnapshot>(
-                        stream: Firestore.instance
-                            .collection('chatRoom')
-                            .where('chatRoomId', isEqualTo: chatRoomId)
-                            .orderBy("recentTime", descending: true)
-                            .snapshots(),
-                        builder: (ctx, chatRoomSnapshot) {
-                          if (chatRoomSnapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const Center(
-                                child: CircularProgressIndicator());
-                          }
+                if (userInfo[index].documentID != CurrentUserData.userId) {
+                  // FIX THIS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                  return Column(children: [
+                    Row(children: <Widget>[
+                      Expanded(
+                        child: FriendTile(
+                          userName: userInfo[index]['username'],
+                          userImage: userInfo[index]['image_url'],
+                          recentMessage: userInfo[index]
+                              ['email'], //snapshotData['recentMessage'],
+                          recentTime: '',
+                        ),
+                      ),
+                      GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onTap: () => Gestures().createThenNavigateToChatRoom(
+                              context, receiverId, userInfo[index])
+                        ,
+                        child: const UserButton(),
+                      )
+                    ]),
+                    const Padding(
+                      padding: EdgeInsets.only(left: 10, right: 10),
+                      child: Divider(
+                        thickness: 1,
+                      ),
+                    )
+                  ]); //snapshotData['recentTime']);
 
-                          return userInfo[index].documentID !=
-                                  CurrentUserData.userId
-                              ? FriendTile(
-                                userName: userInfo[index]['username'],
-                                userImage: userInfo[index]['image_url'],
-                                recentMessage: chatRoomSnapshot.data!.documents[0]['recentMessage'],
-                                recentTime: DateFormatter().getVerboseDateTime(chatRoomSnapshot.data!.documents[0]['recentTime'].toDate()),
-                              )
-                              : const SizedBox(height: 0, width: 0);
-                        })
-                    );
+                  // child: StreamBuilder<QuerySnapshot>(
+                  //     stream: Firestore.instance
+                  //         .collection('chatRoom')
+                  //         .where('chatRoomId', isEqualTo: chatRoomId)
+                  //         .snapshots(),
+                  //     builder: (ctx, chatRoomSnapshot) {
+                  //       if (chatRoomSnapshot.connectionState ==
+                  //           ConnectionState.waiting) {
+                  //         return const Center(
+                  //             child: CircularProgressIndicator());
+                  //       }
+
+                  //       var recentMessageData;
+                  //       var recentTimeData;
+
+                  //       if (chatRoomSnapshot.data!.documents[0] != null) {
+                  //         recentMessageData = chatRoomSnapshot
+                  //             .data!.documents[0]['recentMessage'];
+                  //         recentTimeData = DateFormatter().getVerboseDateTime(
+                  //             chatRoomSnapshot
+                  //                 .data!.documents[0]['recentTime']
+                  //                 .toDate());
+                  //       } else {
+                  //         recentMessageData = '';
+                  //         recentTimeData = '';
+                  //       }
+
+                  //       return userInfo[index].documentID !=
+                  //               CurrentUserData.userId
+                  //           ? FriendTile(
+                  //               userName: userInfo[index]['username'],
+                  //               userImage: userInfo[index]['image_url'],
+                  //               recentMessage: recentMessageData ?? '',
+                  //               recentTime: recentTimeData ?? '',
+                  //             )
+                  //           : const SizedBox(height: 0, width: 0);
+                  //     })
+
+                } else {
+                  return SizedBox();
+                }
               });
         });
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

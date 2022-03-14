@@ -1,9 +1,11 @@
+import 'package:pigeon_post/helper/current_user_data.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HelperFunctions {
   static String sharedPreferenceUserLoggedInKey = "ISLOGGEDIN";
   static String sharedPreferenceUserNameKey = "USERNAMEKEY";
   static String sharedPreferenceUserEmailKey = "USEREMAILKEY";
+  static String sharedPreferenceUserImageUrlKey = "USERIMAGEURLKEY";
 
   // save login status, email, username in shared preference
   static Future<bool> saveUserLoggedInSharedPreference(
@@ -22,6 +24,11 @@ class HelperFunctions {
     return await pref.setString(sharedPreferenceUserNameKey, userName);
   }
 
+  static Future<bool> saveUserImageUrlSharedPreference(String imageUrl) async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    return await pref.setString(sharedPreferenceUserImageUrlKey, imageUrl);
+  }
+
   // get login status, email, username from shared preference
   static Future<bool?> getUserLoggedInSharedPreference() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
@@ -30,12 +37,24 @@ class HelperFunctions {
 
   static Future<String?> getUserEmailSharedPreference() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
-    return await pref.getString(sharedPreferenceUserEmailKey);
+    return  pref.getString(sharedPreferenceUserEmailKey);
   }
 
   static Future<String?> getUserNameSharedPreference() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
-    return await pref.getString(sharedPreferenceUserNameKey);
+    return pref.getString(sharedPreferenceUserNameKey);
+  }
+
+  static Future<String?> getUserImageUrlSharedPreference() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    return pref.getString(sharedPreferenceUserImageUrlKey);
+  }
+
+  static getCurrentUserData() async {
+    CurrentUserData.username =
+        (await HelperFunctions.getUserNameSharedPreference())!;
+    CurrentUserData.userEmail =
+        (await HelperFunctions.getUserEmailSharedPreference())!;
   }
 
   // chatroom related functions

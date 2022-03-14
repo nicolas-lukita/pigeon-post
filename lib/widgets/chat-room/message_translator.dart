@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pigeon_post/api/translator_api.dart';
 import 'package:translator/translator.dart';
-import '../models/language.dart';
+import '../../models/language.dart';
 
 class MessageTranslator extends StatefulWidget {
   final String text;
