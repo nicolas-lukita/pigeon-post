@@ -7,6 +7,7 @@ import 'package:pigeon_post/widgets/chat-room/message_translator.dart';
 import './message_bubble.dart';
 import 'package:provider/src/provider.dart';
 import './message_translator.dart';
+import './translated_message_bubble.dart';
 
 class Message extends StatefulWidget {
   final String currentUid;
@@ -27,6 +28,8 @@ class Message extends StatefulWidget {
 
 class _MessageState extends State<Message> {
   late Stream<QuerySnapshot> chatStream;
+
+  bool individualTranslate = false;
 
   @override
   void initState() {
@@ -56,20 +59,13 @@ class _MessageState extends State<Message> {
                   shrinkWrap: true,
                   itemBuilder: (context, index) {
                     if (widget.isTranslate) {
-                      return MessageTranslator(
-                        text: chatData[index]['text'],
-                        language1Code:
-                            context.watch<LanguageProvider>().language1.code,
-                        language2Code:
-                            context.watch<LanguageProvider>().language2.code,
-                        builder: (translatedMessage) => MessageBubble(
-                          username: chatData[index]['username'],
-                          message: chatData[index]['text'],
-                          timeSent: chatData[index]['timeSent'].toDate(),
-                          translatedMessage: translatedMessage,
-                          isMe: chatData[index]['sender'] ==
-                              CurrentUserData.userId,
-                        ),
+                      return TranslatedMessageBubble(
+                        username: chatData[index]['username'],
+                        message: chatData[index]['text'],
+                        timeSent: chatData[index]['timeSent'].toDate(),
+                        translatedMessagePlaceholder: '',
+                        isMe:
+                            chatData[index]['sender'] == CurrentUserData.userId,
                       );
                     } else {
                       return MessageBubble(
@@ -79,6 +75,7 @@ class _MessageState extends State<Message> {
                         translatedMessage: '',
                         isMe:
                             chatData[index]['sender'] == CurrentUserData.userId,
+                        isTranslated: false,
                       );
                     }
                   })
