@@ -77,45 +77,6 @@ class _SearchUserPageState extends State<SearchUserPage> {
                 );
               });
         });
-
-    // return haveUserSearched
-    //     ? ListView.builder(
-    //         shrinkWrap: true,
-    //         itemCount: searchResultSnapshot.documents.length,
-    //         itemBuilder: (context, index) {
-    //           if (searchResultSnapshot.documents[index].documentID !=
-    //               CurrentUserData.userId) {
-    //             return userTile(
-    //               searchResultSnapshot.documents[index].data["username"],
-    //               searchResultSnapshot.documents[index].data["email"],
-    //               searchResultSnapshot.documents[index].documentID,
-    //               searchResultSnapshot.documents[index].data["image_url"],
-    //             );
-    //           } else {
-    //             return const SizedBox();
-    //           }
-    //         })
-    //     : StreamBuilder<QuerySnapshot>(
-    //         stream: allUserStream,
-    //         builder: (ctx, userSnapshot) {
-    //           if (userSnapshot.connectionState == ConnectionState.waiting) {
-    //             return const Center(child: CircularProgressIndicator());
-    //           }
-    //           final userInfo = userSnapshot.data!.documents;
-    //           return ListView.builder(
-    //               itemCount: userInfo.length,
-    //               itemBuilder: (listViewCtx, index) {
-    //                 if (userInfo[index].documentID == CurrentUserData.userId) {
-    //                   return const SizedBox(height: 0, width: 0);
-    //                 }
-    //                 return userTile(
-    //                   userInfo[index]['username'],
-    //                   userInfo[index]['email'],
-    //                   userInfo[index].documentID,
-    //                   userInfo[index]["image_url"],
-    //                 );
-    //               });
-    //         });
   }
 
   Widget userTile(

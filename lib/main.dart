@@ -12,6 +12,7 @@ import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 Future main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(MultiProvider(
     providers: [ChangeNotifierProvider(create: (_) => LanguageProvider())],
     child: const MyApp(),

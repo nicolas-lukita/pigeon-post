@@ -1,5 +1,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.pigeon_post">
+    <queries>
+          <intent>
+               <action android:name="android.media.action.IMAGE_CAPTURE" />
+          </intent>
+    </queries>
    <application
         android:label="pigeon_post"
         android:icon="@mipmap/launcher_icon">
@@ -38,4 +43,6 @@
             android:name="flutterEmbedding"
             android:value="2" />
     </application>
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-feature android:name="android.hardware.camera" />
 </manifest>
