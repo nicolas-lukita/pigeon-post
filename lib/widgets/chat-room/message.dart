@@ -26,16 +26,23 @@ class Message extends StatefulWidget {
 }
 
 class _MessageState extends State<Message> {
+  late Stream<QuerySnapshot> chatStream;
+
+  @override
+  void initState() {
+    chatStream = Firestore.instance
+        .collection("chatRoom")
+        .document(widget.chatRoomId)
+        .collection("chats")
+        .orderBy("timeSent", descending: true)
+        .snapshots();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-        stream: Firestore.instance
-            .collection("chatRoom")
-            .document(widget.chatRoomId)
-            .collection("chats")
-            .orderBy("timeSent", descending: true)
-            .snapshots(),
+        stream: chatStream,
         builder: (ctx, chatSnapShot) {
           if (chatSnapShot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
