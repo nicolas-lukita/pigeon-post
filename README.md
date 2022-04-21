@@ -1,5 +1,6 @@
 # pigeon-post
-Mobile chat application with a built-in language translator 
+Mobile chat application with a built-in language translator.
+Built with Firebase Authentication, Firebase Firestore, and Google Cloud Translation
 
 ![image](https://user-images.githubusercontent.com/76612512/164393167-9c69eaf6-5aef-41f9-930c-fb59ae86a813.png)
 
